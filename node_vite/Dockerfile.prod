@@ -1,5 +1,5 @@
 # マルチステージビルド for 本番環境
-FROM node:18 AS builder
+FROM node:18-alpine AS builder
 
 # 作業ディレクトリ作成
 WORKDIR /app
@@ -7,8 +7,8 @@ WORKDIR /app
 # package.jsonとlockファイルをコピー
 COPY package*.json ./
 
-# 依存関係インストール
-RUN npm ci --only=production
+# 依存関係インストール（ビルド時はすべての依存関係が必要）
+RUN npm ci
 
 # ソースコードをコピー
 COPY . .
@@ -16,7 +16,7 @@ COPY . .
 # 本番用ビルド
 RUN npm run build
 
-# Nginxステージ
+# Nginxステージ（本番実行環境）
 FROM nginx:alpine
 
 # ビルドされたファイルをNginxのdocumentrootにコピー
