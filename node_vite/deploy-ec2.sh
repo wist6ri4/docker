@@ -53,8 +53,14 @@ fi
 
 # 6. 本番環境用のビルドとデプロイ
 echo "🏗️  アプリケーションをビルド・デプロイ中..."
+
+# 古いコンテナとイメージを削除
 docker-compose -f docker-compose.prod.yaml down --remove-orphans || true
-docker-compose -f docker-compose.prod.yaml up --build -d
+docker system prune -f
+
+# キャッシュを無効にしてビルド
+docker-compose -f docker-compose.prod.yaml build --no-cache
+docker-compose -f docker-compose.prod.yaml up -d
 
 # 7. セキュリティグループとファイアウォールの確認
 echo "🔒 セキュリティ設定を確認してください:"

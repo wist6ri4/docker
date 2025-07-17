@@ -4,11 +4,14 @@ FROM node:18-alpine AS builder
 # 作業ディレクトリ作成
 WORKDIR /app
 
-# package.jsonとlockファイルをコピー
-COPY package*.json ./
+# npmの設定（キャッシュとエラー回避）
+RUN npm config set cache /tmp/.npm
 
-# 依存関係インストール（ビルド時はすべての依存関係が必要）
-RUN npm ci
+# package.jsonをコピー
+COPY package.json ./
+
+# 依存関係インストール（package-lock.jsonがない場合はnpm install使用）
+RUN npm install --verbose
 
 # ソースコードをコピー
 COPY . .
