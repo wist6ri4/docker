@@ -10,7 +10,7 @@ RUN npm config set cache /tmp/.npm
 # package.jsonをコピー
 COPY package.json ./
 
-# 依存関係インストール（package-lock.jsonがない場合はnpm install使用）
+# 依存関係インストール
 RUN npm install --verbose
 
 # ソースコードをコピー

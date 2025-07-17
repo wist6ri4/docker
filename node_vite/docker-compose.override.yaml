@@ -1,0 +1,11 @@
+# 開発者ごとの個別設定（.gitignoreに追加推奨）
+version: "3"
+services:
+    vite:
+        ports:
+            - "3000:5173" # 個人の好みでポート変更
+        environment:
+            - DEBUG=true
+            - CUSTOM_ENV=my-setting
+        volumes:
+            - ./custom-config:/app/config # 個人用設定ファイル

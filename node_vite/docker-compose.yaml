@@ -1,12 +1,15 @@
 version: "3"
 services:
-  vite:
-    build: .
-    ports:
-      - "5173:5173"
-    volumes:
-      - .:/app
-      - /app/node_modules  # ホスト側のnode_modulesと衝突を防ぐ
-    environment:
-      - HOST=0.0.0.0  # Viteが外部アクセス受け入れるため
-      - CHOKIDAR_USEPOLLING=true
+    vite:
+        build: .
+        ports:
+            - "5173:5173"
+        volumes:
+            - .:/app
+            - node_modules:/app/node_modules # named volumeを使用
+        environment:
+            - HOST=0.0.0.0 # Viteが外部アクセス受け入れるため
+            - CHOKIDAR_USEPOLLING=true
+
+volumes:
+    node_modules:

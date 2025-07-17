@@ -37,8 +37,8 @@ if ! command -v git &> /dev/null; then
 fi
 
 # 5. リポジトリのクローン（既存の場合は更新）
-REPO_URL="https://github.com/wist6ri4/realmomotetsu-v2.git"
-PROJECT_DIR="$HOME/realmomotetsu-v2"
+REPO_URL="https://github.com/wist6ri4/docker.git"
+PROJECT_DIR="$HOME/docker"
 
 if [ -d "$PROJECT_DIR" ]; then
     echo "📥 既存のリポジトリを更新中..."
@@ -54,13 +54,31 @@ fi
 # 6. 本番環境用のビルドとデプロイ
 echo "🏗️  アプリケーションをビルド・デプロイ中..."
 
+# Dockerグループのチェック
+check_docker_permission() {
+    if ! docker ps &> /dev/null; then
+        echo "⚠️  Dockerの権限が不足しています。sudoを使用します。"
+        return 1
+    fi
+    return 0
+}
+
+# Docker実行のラッパー関数
+run_docker() {
+    if check_docker_permission; then
+        "$@"
+    else
+        sudo "$@"
+    fi
+}
+
 # 古いコンテナとイメージを削除
-docker-compose -f docker-compose.prod.yaml down --remove-orphans || true
-docker system prune -f
+run_docker docker-compose -f docker-compose.prod.yaml down --remove-orphans || true
+run_docker docker system prune -f
 
 # キャッシュを無効にしてビルド
-docker-compose -f docker-compose.prod.yaml build --no-cache
-docker-compose -f docker-compose.prod.yaml up -d
+run_docker docker-compose -f docker-compose.prod.yaml build --no-cache
+run_docker docker-compose -f docker-compose.prod.yaml up -d
 
 # 7. セキュリティグループとファイアウォールの確認
 echo "🔒 セキュリティ設定を確認してください:"

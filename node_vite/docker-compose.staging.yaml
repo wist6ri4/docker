@@ -1,0 +1,16 @@
+# staging環境用（本番に近いが、テスト用）
+version: "3"
+services:
+    vite-staging:
+        build:
+            context: .
+            dockerfile: Dockerfile.prod
+        ports:
+            - "8080:80"
+        restart: unless-stopped
+        environment:
+            - NODE_ENV=staging
+            - API_URL=https://staging-api.example.com
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.staging.rule=Host(`staging.example.com`)"
